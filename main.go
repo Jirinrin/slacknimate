@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"strings"
 
 	"github.com/codegangsta/cli"
 	"github.com/nlopes/slack"
@@ -43,8 +44,12 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) {
 		apiToken := c.String("api-token")
-		channel := c.String("channel")
+
+		channelSlice := strings.Split(c.String("channel"), "/")	
+		channel := channelSlice[len(channelSlice)-1]
+
 		delay := c.Float64("delay")
+
 		noop := c.Bool("preview")
 
 		if !noop {
