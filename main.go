@@ -41,6 +41,10 @@ func main() {
 			Name:  "preview",
 			Usage: "preview on terminal instead of posting",
 		},
+		cli.BoolFlag{
+			Name:  "backandforth, bf",
+			Usage: "play the content forth and back",
+		},
 	}
 	app.Action = func(c *cli.Context) {
 		apiToken := c.String("api-token")
@@ -67,11 +71,12 @@ func main() {
 			}
 		}
 
-		var frames chan string
+		frames := ScanFrames(c.Bool("backandforth"))
+		var framesChan chan string
 		if c.Bool("loop") {
-			frames = LoopingStdinScanner()
+			framesChan = LoopingFramesIterator(frames)
 		} else {
-			frames = StdinScanner()
+			framesChan = FramesIterator(frames)
 		}
 
 		api := slack.New(apiToken)
@@ -81,7 +86,7 @@ func main() {
 		var dst, ts, txt string
 		tickerChan := time.Tick(time.Millisecond * time.Duration(delay*1000))
 
-		for frame := range frames {
+		for frame := range framesChan {
 			<-tickerChan
 			if noop {
 				fmt.Printf("\033[2K\r%s", frame)
