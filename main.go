@@ -71,7 +71,7 @@ func main() {
 			}
 		}
 
-		frames := ScanFrames(c.Bool("backandforth"))
+		frames := ScanFrames(c.Bool("backandforth"), c.Bool("loop"))
 		var framesChan chan string
 		if c.Bool("loop") {
 			framesChan = LoopingFramesIterator(frames)

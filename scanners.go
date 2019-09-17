@@ -8,7 +8,7 @@ import (
 
 // ScanFrames reads from StdIn and when it encounters and EOF it stops
 // and returns all lines in the form of an array.
-func ScanFrames(backAndForth bool) []string {
+func ScanFrames(backAndForth bool, loop bool) []string {
 	var frames []string
 	reader := bufio.NewScanner(os.Stdin)
 	for reader.Scan() {
@@ -21,8 +21,12 @@ func ScanFrames(backAndForth bool) []string {
 
 	if backAndForth {
 		backAndForthFrames := frames
-		for i := len(frames)-2; i > 0; i-- {
-			backAndForthFrames = append(backAndForthFrames, frames[len(frames)-i-1])
+		lastIndex := 0
+		if loop {
+			lastIndex = 1
+		}
+		for i := len(frames)-2; i >= lastIndex; i-- {
+			backAndForthFrames = append(backAndForthFrames, frames[i])
 		}
 		return backAndForthFrames
 	}
