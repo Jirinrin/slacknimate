@@ -25,7 +25,7 @@ func ScanFrames(backAndForth bool, loop bool) []string {
 		if loop {
 			lastIndex = 1
 		}
-		for i := len(frames)-2; i >= lastIndex; i-- {
+		for i := len(frames) - 2; i >= lastIndex; i-- {
 			backAndForthFrames = append(backAndForthFrames, frames[i])
 		}
 		return backAndForthFrames

@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/codegangsta/cli"
 	"github.com/nlopes/slack"
@@ -80,42 +79,8 @@ func main() {
 		}
 
 		api := slack.New(apiToken)
-		params := slack.NewPostMessageParameters()
-		params.AsUser = true
 
-		var dst, ts, txt string
-		tickerChan := time.Tick(time.Millisecond * time.Duration(delay*1000))
-
-		for frame := range framesChan {
-			<-tickerChan
-			if noop {
-
-				fmt.Printf("\033[2K\r%s", frame)
-
-			} else {
-
-				if dst == "" || ts == "" {
-
-					var err error
-					dst, ts, err = api.PostMessage(channel, slack.MsgOptionText(frame, false), slack.MsgOptionAsUser(true))
-					if err != nil {
-						log.Fatal("FATAL: Could not post initial frame to Slack: ", err)
-					}
-					log.Printf("initial frame %v/%v: %v\n", dst, ts, frame)
-
-				} else {
-
-					var err error
-					_, _, txt, err = api.UpdateMessage(dst, ts, slack.MsgOptionText(frame, false))
-					if err != nil {
-						log.Printf("ERROR updating %v/%v with frame %v: %v", dst, ts, frame, err)
-					} else {
-						log.Printf("updated frame %v/%v: %v", dst, ts, txt)
-					}
-				}
-
-			}
-		}
+		LoopPostMessage(framesChan, channel, delay, noop, api)
 
 		fmt.Println("\nDone!")
 	}
