@@ -44,6 +44,10 @@ func main() {
 			Name:  "backandforth, bf",
 			Usage: "play the content forth and back",
 		},
+		cli.StringFlag{
+			Name:  "updateproperty, up",
+			Usage: "set to \"username\" to update your user name instead of post a message",
+		},
 	}
 	app.Action = func(c *cli.Context) {
 		apiToken := c.String("api-token")
@@ -80,7 +84,11 @@ func main() {
 
 		api := slack.New(apiToken)
 
-		LoopPostMessage(framesChan, channel, delay, noop, api)
+		if c.String("updateproperty") == "username" {
+			LoopUpdateProfile(framesChan, delay, noop, api)
+		} else {
+			LoopPostMessage(framesChan, channel, delay, noop, api)
+		}
 
 		fmt.Println("\nDone!")
 	}

@@ -52,3 +52,43 @@ func LoopPostMessage(framesChan chan string, channel string, delay float64, noop
 
 	LoopOverChannel(framesChan, delay, noop, callback)
 }
+
+// In order for this to work, paste this code in vendor\github.com\nlopes\slack\users.go:
+
+// // SetUserName sets the current user's display name.
+// // CUSTOM ADDED BY JIRI SWEN 2019
+// func (api *Client) SetUserName(newUserName string) error {
+// 	values := url.Values{
+// 		"token": {api.token},
+// 		"value": {newUserName},
+// 	}
+// 	values.Add("name", "display_name")
+
+// 	resp := &getUserProfileResponse{}
+
+// 	err := api.postMethod(context.Background(), "users.profile.set", values, &resp)
+
+// 	if err != nil {
+// 		return err
+// 	}
+// 	if err := resp.Err(); err != nil {
+// 		fmt.Println(err)
+// 		return err
+// 	}
+
+// 	return nil
+// }
+
+// LoopUpdateProfile is cool
+func LoopUpdateProfile(framesChan chan string, delay float64, noop bool, slackAPI *slack.Client) {
+	callback := func(frame string) {
+		err := slackAPI.SetUserName(frame)
+		if err != nil {
+			log.Printf("ERROR updating with frame %v: %v", frame, err)
+		} else {
+			log.Printf("updated frame %v", frame)
+		}
+	}
+
+	LoopOverChannel(framesChan, delay, noop, callback)
+}
