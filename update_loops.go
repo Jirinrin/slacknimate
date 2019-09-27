@@ -55,6 +55,7 @@ func LoopPostMessage(framesChan chan string, channel string, delay float64, noop
 
 // In order for this to work, paste this code in vendor\github.com\nlopes\slack\users.go:
 
+// TODO also update first name
 // // SetUserName sets the current user's display name.
 // // CUSTOM ADDED BY JIRI SWEN 2019
 // func (api *Client) SetUserName(newUserName string) error {
