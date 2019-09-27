@@ -51,12 +51,7 @@ func main() {
 	}
 	app.Action = func(c *cli.Context) {
 		apiToken := c.String("api-token")
-
-		channelSlice := strings.Split(c.String("channel"), "/")
-		channel := channelSlice[len(channelSlice)-1]
-
 		delay := c.Float64("delay")
-
 		noop := c.Bool("preview")
 
 		if !noop {
@@ -65,7 +60,7 @@ func main() {
 				stderr.Fatal("API token is required.",
 					" Use --api-token or set SLACK_TOKEN env variable.")
 			}
-			if channel == "" {
+			if c.String("channel") == "" && c.String("updateproperty") == "" {
 				stderr.Fatal("Destination is required.",
 					" Use --channel or set SLACK_CHANNEL env variable.")
 			}
@@ -73,6 +68,9 @@ func main() {
 				stderr.Fatal("You must have a delay >=0.001 to avoid creating a time paradox.")
 			}
 		}
+
+		channelSlice := strings.Split(c.String("channel"), "/")
+		channel := channelSlice[len(channelSlice)-1]
 
 		frames := ScanFrames(c.Bool("backandforth"), c.Bool("loop"))
 		var framesChan chan string
